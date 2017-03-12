@@ -8,6 +8,7 @@ var EX, async = require('async'), fs = require('fs'),
 function identity(x) { return x; }
 function fail(why) { throw new Error(why); }
 
+
 EX = function (job, then) {
   job = Object.assign({}, job);
   EX.prepareJobInplace(job);
@@ -25,11 +26,18 @@ EX.easyCli = function (opt, then) {
 
 
 EX.parseArg = function (arg, state, jobs) {
-  if (arg === '-') { fail('Reading from stdin is not supported yet.'); }
-  if (arg.substr(0, 1) === '-') {
-    fail('Unsupported command line option: ' + arg);
+  if ((arg.length > 1) && (arg.substr(0, 1) === '-')) {
+    if (arg === '-o') {
+      state.outputFilenameNext = this.next().crnt;
+      return;
+    }
+    fail('Unsupported CLI option: ' + arg);
   }
   arg = Object.assign({}, state, { sourceFilename: arg });
+  if ((!arg.outputFilename) && state.outputFilenameNext) {
+    arg.outputFilename = state.outputFilenameNext;
+    state.outputFilenameNext = null;
+  }
   EX.prepareJobInplace(arg);
   jobs.push(arg);
 };
@@ -45,16 +53,22 @@ EX.prepareJobInplace = function (job) {
 EX.processJob = function (job, whenJobDone) {
   async.waterfall([
     function (whenSourceRead) {
-      fs.readFile(job.sourceFilename,
+      var srcSpec = job.sourceFilename;
+      if (srcSpec === '-') { srcSpec = process.stdin.fd; }
+      fs.readFile(srcSpec,
         (job.sourceEncoding || job.encoding || 'UTF-8'),
         whenSourceRead);
     },
     function (text, whenSaved) {
-      var traFunc = job.trafoFunc;
+      var traFunc = job.trafoFunc, ofn = job.outputFilename,
+        enc = (job.sourceEncoding || job.encoding || 'UTF-8');
       if (traFunc) { text = traFunc(text); }
-      fs.writeFile(job.outputFilename, text, {
-        encoding: (job.sourceEncoding || job.encoding || 'UTF-8'),
-      }, whenSaved);
+      if (ofn === '-') {
+        if (process.stdout.write(ofn, enc)) { return whenSaved(); }
+        return whenSaved(new Error('Failed to write to stdout'
+          + '; source: ' + job.sourceFilename));
+      }
+      fs.writeFile(ofn, text, { encoding: enc }, whenSaved);
     },
   ], whenJobDone);
 };
