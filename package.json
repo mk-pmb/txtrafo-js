@@ -1,0 +1,38 @@
+{ "name": "txtrafo",
+  "version": "0.0.1",
+  "description": "Easily apply other module's string transform functions to stdio and text files.",
+  "keywords": [
+    "cli",
+    "string",
+    "textfile",
+    "transform"
+  ],
+
+  "author": "M.K. (https://github.com/mk-pmb)",
+  "homepage": "https://github.com/mk-pmb/txtrafo-js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mk-pmb/txtrafo-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mk-pmb/txtrafo-js/issues"
+  },
+
+  "private": false, "license": "ISC",
+
+  "main": "txtrafo.js",
+  "scripts": { "test": "nodejs test/all.js" },
+  "directories": { "test": "test" },
+
+  "dependencies": {
+    "array-iter-next-crnt": "^0.1.1",
+    "async": "^2.0.1"
+  },
+  "devDependencies": {
+    "equal-pmb": "^0.1.9",
+    "usnam-pmb": "^0.2.3"
+  },
+
+
+  "npm vs. BOM = Unexpected token": "-*- coding: UTF-8 -*-"
+}
