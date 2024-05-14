@@ -64,7 +64,7 @@ EX.processJob = function (job, whenJobDone) {
         enc = (job.sourceEncoding || job.encoding || 'UTF-8');
       if (traFunc) { text = traFunc(text); }
       if (ofn === '-') {
-        if (process.stdout.write(ofn, enc)) { return whenSaved(); }
+        if (process.stdout.write(text, enc)) { return whenSaved(); }
         return whenSaved(new Error('Failed to write to stdout'
           + '; source: ' + job.sourceFilename));
       }

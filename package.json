@@ -1,5 +1,5 @@
 { "name": "txtrafo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Easily apply other module's string transform functions to stdio and text files.",
   "keywords": [
     "cli",
